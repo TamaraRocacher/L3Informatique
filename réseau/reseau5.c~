@@ -1,0 +1,10 @@
+#include <netdb.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <stdio.h>
+
+int main( int argc, char **argv){
+  struct hostent* h = gethostbyname("www.google.com");
+  printf("%d,%d,%d,%d\n",(unsigned char)h->h_addr_list[0][0],h->h_addr_list[0][1],h->h_addr_list[0][2],h->h_addr_list[0][3]);
+  return 0;
+}

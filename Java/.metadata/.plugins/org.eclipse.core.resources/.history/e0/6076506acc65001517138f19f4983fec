@@ -1,0 +1,45 @@
+package fileAttente;
+import java.util.ArrayList;
+
+public class Principale {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		FileAttente<Integer> file = new FileAttente<Integer>();
+		int i =5;
+		int j=8;
+		file.entre(i);
+		System.out.println(file);
+		file.entre(j);
+		System.out.println(file);
+		Integer k=file.sort();
+		System.out.println(file);
+		System.out.println(k.toString());
+		
+		FileAttente<String> file2 = new FileAttente<String>();
+		String a = "salut";
+		String b = "hello";
+		file2.entre(a);
+		System.out.println(file2);
+		file2.entre(b);
+		System.out.println(file2);
+		String c=file2.sort();
+		System.out.println(file2);
+		System.out.println(c);
+		
+		Personne moi = new Personne("tam",23);
+		Personne vieux = new Personne("mamie",65);
+		Personne jeune = new Personne("bébé",1);
+		FileAttentePrio<Personne> fileP = new FileAttentePrio<Personne>();
+		fileP.entre(moi);
+		fileP.entre(vieux);
+		System.out.println(fileP);
+		fileP.entre(jeune);
+		System.out.println(fileP);
+		Personne sortie1=fileP.sort();
+		System.out.println(sortie1);
+		
+		
+	}
+
+}

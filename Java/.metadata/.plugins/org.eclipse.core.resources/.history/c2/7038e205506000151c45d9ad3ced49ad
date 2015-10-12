@@ -1,0 +1,10 @@
+package pokemon;
+
+public class Croisière extends PokemonEau{
+	public Croisière(String n, int p, int nbN){
+		super(n,p,nbN);
+	}
+	public float vitesse(){
+		return((poids/25*nbNageoire)/2);
+	}
+}

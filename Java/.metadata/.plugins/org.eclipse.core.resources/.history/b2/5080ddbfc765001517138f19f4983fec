@@ -1,0 +1,21 @@
+package fileAttente;
+import java.util.ArrayList;
+
+public class Principale {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		FileAttente<Integer> file = new FileAttente<Integer>();
+		int i =5;
+		int j=8;
+		file.entre(i);
+		System.out.println(file);
+		file.entre(j);
+		System.out.println(file);
+		Integer k=file.sort();
+		System.out.println(file);
+		System.out.println(k.toString());
+		
+	}
+
+}

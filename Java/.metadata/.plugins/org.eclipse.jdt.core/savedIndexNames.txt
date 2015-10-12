@@ -1,0 +1,4 @@
+INDEX VERSION 1.127+/auto_home/trocacher/Java/.metadata/.plugins/org.eclipse.jdt.core
+3005287339.index
+1751081329.index
+3133464606.index
