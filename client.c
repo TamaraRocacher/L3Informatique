@@ -23,11 +23,7 @@ int initSocketTCP(struct sockaddr_in* s, int p){
   s->sin_addr.s_addr = htonl(INADDR_ANY);
   inet_aton("127.0.0.1", s->sin_addr.s_addr);
 
-  /*t b=bind(fd, (struct sockaddr *)s, sizeof(*s));
-  if (b<0){
-    fprintf(stderr,"bind bug\n");
-    exit(2);
-  }*/
+ 
   return fd;
 }
 
