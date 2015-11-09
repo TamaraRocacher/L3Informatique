@@ -1,0 +1,10 @@
+package p1;
+
+import java.io.*;
+import java.uil.Scanner;
+
+public class B
+{
+    public void ma(){}
+    public void mc(){}
+}
