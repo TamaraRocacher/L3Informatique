@@ -17,7 +17,7 @@ void pointrandom(int n, int point[][2]){
 void distances(int n, int m, int point[][2], int edge[][3]){
   int k=0;
   for(int i=0;i<n-1;i++){
-    for(int j=0;j<i+1;j++){
+    for(int j=i+1;j<n;j++){
       edge[k][0]=i;
       edge[k][1]=j;
       edge[k][2]=(point[i][0]-point[j][0])*(point[i][0]-point[j][0])+(point[i][1]-point[j][1])*(point[i][1]-point[j][1]);
