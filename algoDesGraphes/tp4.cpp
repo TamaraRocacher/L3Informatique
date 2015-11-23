@@ -60,7 +60,69 @@ void AffichageGraphique(int n, int point[][2], vector<int> voisin[])       // Cr
  output << "showpage";
  output << endl;
 }
+bool existeTraiteZero(int n,int traite[]){
+  
+  for(int i=0; i<n ; i++){
+    if( traite[i]==0)
+      return true;
+  }
+  return false;
+}
 
+int dMin( int n, int traite[], int d[]){
+  int tmp[n];
+  int tp=0;
+  for(int i=0; i<n ; i++){
+    if( traite[i]==0){
+      tmp[i]=d[i];
+    }
+    else
+      tmp[i]=(int) INFINITY;
+  }
+  for(int k=0;k<n; k++){
+    for (int j=0;j<n;j++){
+      if(tmp[j]>tmp[j+1]){
+	tp = tmp[j];
+	tmp[j]=tmp[j+1];
+	tmp[j+1]=tp;
+      }
+    }
+  }
+  return tmp[0];
+}
+
+void dijkstra(int n, vector<int> voisin[], int point[][2], int pere[]){
+  int traite[n];
+  int d[n];
+  for(int i=0; i<n; i++){
+    pere[i]=-1;
+    d[i]=(int)INFINITY;
+    traite[i]=0;
+  }
+  cout << "testa 1" << endl;
+  pere[0]=0;
+  d[0]=0;
+  traite[0]=1;
+  int x=1;
+  while(existeTraiteZero(n, traite)){
+    cout << "testa 2" << endl;
+    x=dMin(n, traite,d);
+    traite[x]=1;
+    for(int y=0;y<voisin[x].size();y++){
+      cout << "testa 3" << endl;
+      if(traite[y]==0 && d[y] > d[x] +sqrt((point[x][0]-point[y][0])*(point[x][0]-point[y][0])+(point[x][1]-point[y][1])*(point[x][1]-point[y][1]))){
+	d[y]= d[x] +sqrt((point[x][0]-point[y][0])*(point[x][0]-point[y][0])+(point[x][1]-point[y][1])*(point[x][1]-point[y][1]));
+	pere[y]=x;
+      }
+    }
+  }
+}
+
+/*int construireArbre(int n, int arbre[][2], int pere[]){
+  for(int i =0;i<n; i++)
+    for(int j=i+1
+    arbre[i][0]=
+    }*/
 
 int main(){
   srand(time(NULL));
@@ -77,6 +139,7 @@ int main(){
   pointrandom(n, point);
   voisins(n,dmax,point,voisin);
   AffichageGraphique(n, point, voisin);
+  dijkstra(n, voisin, point, pere);
 
   return 0;
 }
