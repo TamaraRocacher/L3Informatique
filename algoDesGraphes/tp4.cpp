@@ -69,26 +69,34 @@ bool existeTraiteZero(int n,int traite[]){
   return false;
 }
 
+
+
 int dMin( int n, int traite[], int d[]){
   int tmp[n];
   int tp=0;
   for(int i=0; i<n ; i++){
-    if( traite[i]==0){
-      tmp[i]=d[i];
-    }
-    else
-      tmp[i]=(int) INFINITY;
+       tmp[i]=i;
   }
+ 
   for(int k=0;k<n; k++){
     for (int j=0;j<n;j++){
-      if(tmp[j]>tmp[j+1]){
+      if(d[tmp[j]]>d[tmp[j+1]]){
 	tp = tmp[j];
 	tmp[j]=tmp[j+1];
 	tmp[j+1]=tp;
       }
     }
+   
+  }
+ 
+  while(traite[tmp[0]]!=0){
+     for(int i=0;i<n-1;i++){
+      tmp[i]=tmp[i+1];
+    }
   }
   return tmp[0];
+
+    
 }
 
 void dijkstra(int n, vector<int> voisin[], int point[][2], int pere[]){
@@ -99,17 +107,18 @@ void dijkstra(int n, vector<int> voisin[], int point[][2], int pere[]){
     d[i]=(int)INFINITY;
     traite[i]=0;
   }
-  cout << "testa 1" << endl;
+
   pere[0]=0;
   d[0]=0;
   traite[0]=1;
   int x=1;
   while(existeTraiteZero(n, traite)){
-    cout << "testa 2" << endl;
+
     x=dMin(n, traite,d);
+    cout<<x<<endl;
     traite[x]=1;
     for(int y=0;y<voisin[x].size();y++){
-      cout << "testa 3" << endl;
+    
       if(traite[y]==0 && d[y] > d[x] +sqrt((point[x][0]-point[y][0])*(point[x][0]-point[y][0])+(point[x][1]-point[y][1])*(point[x][1]-point[y][1]))){
 	d[y]= d[x] +sqrt((point[x][0]-point[y][0])*(point[x][0]-point[y][0])+(point[x][1]-point[y][1])*(point[x][1]-point[y][1]));
 	pere[y]=x;
