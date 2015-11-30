@@ -37,7 +37,7 @@ int main (int argc, char **argv, char **env){
   struct sockaddr_in sockStruct;
   int port = atoi(argv[1]);
   int sockLoc = initSocketTCP(&sockStruct, port);
-  int sockDist;
+  int sockDist;// socket locale reservee au client
 
   //listen
   int l=listen(sockLoc, 5);

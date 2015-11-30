@@ -1,0 +1,14 @@
+#include <signal.h>
+#include <stdio.h>
+
+void gest(int sig){
+  printf("signal %d bien reçu!\n", sig);
+}
+
+struct sigaction action;
+
+void main(int argc, char** argv){
+  action.sa_handler=gest;
+  sigaction(SIGINT, &action, NULL);
+  while(1);
+}

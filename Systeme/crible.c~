@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+void crible(int *in){
+  if(-1==close(in[1])){//pas d ecriture dans in, deja remplit quand passé a crible
+    fprintf(stderr,"erreur fermeture du decripteur en ecriture\n");
+    exit(1);
+  }
+  int p, n;
+  //tube vide
+  if((n=read(in[0],&p,sizeof(int)))!= sizeof(int)){
+    if(n==0){
+      close(in[0]);// plus de lecture a faire
+      return; // interrompre le programme crible
+    }
+    else
+      exit(2);//erreur lecture
+  }
+
+  //tube non vide
+  else{
+    printf("%d ",p);
+    int out[2];// creation tube de sortie
+    if(pipe(out)==-1){
+      fprintf(stderr,"erreur creation du tube\n");
+      exit(3);
+    }
+
+    pid_t fils;
+    switch(fils=fork()){
+    case -1: 
+      fprintf(stderr,"erreur de fork\n");
+      exit(4);
+      break;
+    case 0://fils:
+      close(in[0]); // fin de lecture dans in
+      crible(out); // nouveau traitement, avec tube out en entree
+      exit(0);
+      break;
+    default:
+      close(out[0]); // pas de lecture dans out
+      int i;
+      while(read(in[0],(char *)&i, sizeof(int))==sizeof(int)){//lecture dans in, vers i
+	if(i%p){
+	  write(out[1], &i, sizeof(int));//ecriture dans out , de i
+	}
+      }
+      close(in[0]);
+      close(out[1]);
+      int status;
+      wait(&status);
+      exit(status);
+      break;
+    }
+  }
+}
+
+int main(int argc, char** argv){
+  if(argc!=2){
+    fprintf(stderr," %s n\n",argv[0]);
+    exit(5);
+  }
+  int borne=atoi(argv[1]);
+  
+}
