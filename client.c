@@ -60,6 +60,7 @@ int main (int argc, char** argv, char** env){
   }
   printf("\n");
   
-
+  close(sockServ);
+  close(sockDist);
   return 0;
 }

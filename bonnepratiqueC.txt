@@ -1,0 +1,85 @@
+https://discute.duvillie.eu -> td/tp supplementaires
+
+macro de préprocesseur:
+-----------------------
+->inclusion
+->constante
+->remplacecment de texxte (alias)
+->conditions
+->Macros prédéfinies
+	 #ifndef MON_FICHIER_H
+	 #define ...
+	 #endif
+->fonctions / avec nb indefini de variables
+->concaténations
+->affichage littéral
+
+les essentiels:
+---------------
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <errno.h> => perror("..."); affiche ce qui est passé + un 
+	 	   msg detaillé selon ERRNO
+
+macros:
+-------
+	#define PRINTVAR(x) fprintf(stderr, "DEBUG -- %s:%d" #x 
+	" =%d\n", _FILE_, _LINE_, x); 
+
+	=>#x recupère le litteral cad le "nom" de la variable
+
+	=> affichage de la valeur de la variable pour un fichier et une		ligne donnée (celle de l'appel a PRINTVAR() ).
+	________________________________________________________________
+	#ifdef DEBUG  => si #define DEBUG au debut
+	#define DEB_PRINT(...) do{\
+		fprintf(stderr, "DEBUG -- ");\
+		fprintf(stderr, ##__VA_ARGS__);\
+	}while(0);
+
+	=>## concatenation entre macros: #define macro(x) i##x
+	     		   	 	 -> macro(1) = i1
+					 ->VA_ARGS contient tout les 
+					 paramètres passés
+	=>affiche la concaténation des paramètres passés
+	=> do ... while(0): permet de faire un bloc d'instruction 
+	executé une seule fois
+	=> \: permet le retour a la ligne (sinon macro finie)
+
+	=> permet un affichage uniquement en "mode" DEBUG
+
+compilation:
+------------
+gcc -DDEBUG ... => place #define DEBUG au debut de tout les .c
+
+makefile:
+---------
+SRC = les.c
+OBJ= ${SRC:.c=.o} => toutes les sources.c deviennent sources.o
+
+all:
+
+options:
+
+.c.o:
+	@echo GCC $<
+	@${CC} -c ${CFLAGS} $<
+
+=> fic.o : fic.h fic.c
+
+Duff's Device:
+--------------
+~ "go to" -> entrer dans une boucle autrement que par le debut
+=> switch(a){
+   case 1:  //labels sans break!!
+   ...
+} -> UN SEUL bloc!!!
+=> switch(a){
+		case 1: do{ 
+   		case 2:
+   		default:
+	}while();
+   } 
+
+
+IOCCC => pi.c
