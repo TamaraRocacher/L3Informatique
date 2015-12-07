@@ -17,7 +17,7 @@ int initSocketTCP(struct sockaddr_in* s, int p){
   int fd;
 
   //creation socket
-  if((fd =  socket(AF_INET,SOCK_STREAM,IPPROTO_TCP))<0){
+  if((fd =  socket(AF_INET,SOCK_STREAM,0))<0){
     perror ("socket bug\n");
     exit(1);
   }
@@ -29,11 +29,13 @@ int initSocketTCP(struct sockaddr_in* s, int p){
   
   int b=bind(fd, (struct sockaddr *)s, sizeof(*s));
   if (b<0){
-    fprintf(stderr, "bind bug\n");
+    perror("bind bug");
+    //fprintf(stderr, "bind bug\n");
     exit(2);
   }
   return fd;
 }
+
 int max(int nb, int tab[], int fd){
   int i, maxi=fd;
   for(i=0; i<nb;i++){
@@ -44,23 +46,25 @@ int max(int nb, int tab[], int fd){
 }
 
 int main(int argc, char** argv){
-  if(argc < 2)
+  if(argc != 2) {
     printf(" %s PORT", argv[0]);
+    return EXIT_FAILURE;
+  }
 
-  char buf[BUFLEN], l, fd, i;
-  char bufSend[BUFLEN];
+  char buf[BUFLEN], bufSend[BUFLEN];
+  int fd, l, i;
   memset(bufSend,0,BUFLEN);
   memset(buf,0,BUFLEN);
   
   int tabSocket[NB_MAX_CLIENT], nbSocket=0, bestEnch=0, client=0;
-  memset(tabSocket,0,sizeof(tabSocket));
+  memset(tabSocket,0,sizeof(int) * NB_MAX_CLIENT);
   fd_set a_surveiller;
   
   
   int port= atoi(argv[1]);
-  int slen,j=0;
-  char nom[5][BUFLEN];
-  memset(nom,0,5);
+  int slen,j=0,deco=0,k;
+  char nom[25][BUFLEN];
+  memset(nom,0,25 * BUFLEN);
 
   struct sockaddr_in sockStruct;
   fd=initSocketTCP(&sockStruct,port);
@@ -81,14 +85,15 @@ int main(int argc, char** argv){
     memset(&t,0, sizeof(t));
     t.tv_sec=50;
 
-    select(max(nbSocket,tabSocket,fd)+1, &a_surveiller,NULL,NULL,&t);
+    int m =max(nbSocket,tabSocket,fd);
+    select(m+1, &a_surveiller,NULL,NULL,&t);
    
     if(FD_ISSET(fd,&a_surveiller)) {
       printf("Accepte une connexion.\n");
       slen=sizeof(sockStruct);
       tabSocket[nbSocket++]=accept(fd,(struct sockaddr*) &sockStruct,&slen);
       if(tabSocket[nbSocket-1]<0)
-	printf("accept = %d, failed with error : %d \n",tabSocket[nbSocket-1], errno);
+	printf("accept = %d, failed with error : %d \n",tabSocket[--nbSocket], errno);
       else{
 	memset(bufSend,0,BUFLEN);
 	snprintf(bufSend,BUFLEN, "Bonjour,entrez votre nom:\n");
@@ -96,9 +101,12 @@ int main(int argc, char** argv){
 
 	 int ret=recv(tabSocket[i],&buf,BUFLEN,0);
 	 //nom[tabSocket[i]]=buf;
+
+	 // Copie du nom
 	 for(j=0;j<BUFLEN;j++){
 	   nom[tabSocket[i]][j]=buf[j];
 	 }
+
 	
 	 printf("nom =%s \n", nom[tabSocket[i]]);
 	 
@@ -110,19 +118,26 @@ int main(int argc, char** argv){
 	printf("nom =%s \n", nom[tabSocket[i]]);// nom est lié a buf ???
       }
     }
-
+    
     for(i=0; i<nbSocket; i++){
       if(FD_ISSET(tabSocket[i],&a_surveiller)){
 	  int res=recv(tabSocket[i],&buf,BUFLEN,0);
 	  printf("nom =%s \n", nom[tabSocket[i]]);
 	  switch(res){
 	  case -1: 
-	    fprintf(stderr,"receive failed");
+	    perror("receive failed");
 	    
 	  case 0://deconnexion
+	    printf("Gestion d'une déconnexion\n");
+	    deco = tabSocket[i];
 	    close(tabSocket[i]);
 	    tabSocket[i]=tabSocket[nbSocket-1];
 	    nbSocket--;
+	    memset(bufSend,0,BUFLEN);
+	    snprintf(bufSend,BUFLEN, "%s a quitté l'enchère\n", nom[deco]);
+	    for(i=0; i<nbSocket;i++){
+	      send(tabSocket[i],bufSend, BUFLEN,0);
+	    }
 	    break;
 	  default:
 	    if(atoi(buf)>bestEnch){
