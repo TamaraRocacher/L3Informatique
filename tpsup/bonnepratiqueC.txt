@@ -1,0 +1,37 @@
+https://discute.duvillie.eu -> td/tp supplementaires
+
+macro de préprocesseur:
+-----------------------
+->inclusion
+->constante
+->remplacecment de texxte (alias)
+->conditions
+->Macros prédéfinies
+	 #ifndef MON_FICHIER_H
+	 #define ...
+	 #endif
+->fonctions / avec nb indefini de variables
+->concaténations
+->affichage littéral
+
+les essentiels:
+---------------
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+
+macros:
+-------
+	#define PRINTVAR(x) fprintf(stderr, "DEBUG -- %s:%d" #x 
+	" =%d\n", _FILE_, _LINE_, x); 
+
+	=>#x recupère le litteral cad le "nom" de la variable
+	=> affichage de la valeur de la variable pour un fichier et une		ligne donnée (celle de l'appel a PRINTVAR() ).
+_______________________________________________________________________
+	#define DEB_PRINT(...) do{\
+		fprintf(stderr, "DEBUG -- ");\
+		fprintf(stderr, ##_VA_ARGS_);\
+	}while(0);
+
+	=>## concatenation entre macros:
