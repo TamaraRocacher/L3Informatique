@@ -8,6 +8,7 @@
 #include <netdb.h>
 #include <string.h>
 #include <math.h>
+#include <errno.h>
 
 #define NB_MAX_CLIENT 20 
 #define BUFLEN 512
@@ -46,9 +47,10 @@ int main(int argc, char** argv){
   if(argc < 2)
     printf(" %s PORT", argv[0]);
 
-  int buf=0, l, fd, i;
+  char buf[BUFLEN], l, fd, i;
   char bufSend[BUFLEN];
   memset(bufSend,0,BUFLEN);
+  memset(buf,0,BUFLEN);
   
   int tabSocket[NB_MAX_CLIENT], nbSocket=0, bestEnch=0, client=0;
   memset(tabSocket,0,sizeof(tabSocket));
@@ -56,6 +58,9 @@ int main(int argc, char** argv){
   
   
   int port= atoi(argv[1]);
+  int slen,j=0;
+  char nom[5][BUFLEN];
+  memset(nom,0,5);
 
   struct sockaddr_in sockStruct;
   fd=initSocketTCP(&sockStruct,port);
@@ -80,12 +85,36 @@ int main(int argc, char** argv){
    
     if(FD_ISSET(fd,&a_surveiller)) {
       printf("Accepte une connexion.\n");
-      tabSocket[nbSocket++]=accept(fd,&sockStruct, sizeof(sockStruct));
+      slen=sizeof(sockStruct);
+      tabSocket[nbSocket++]=accept(fd,(struct sockaddr*) &sockStruct,&slen);
+      if(tabSocket[nbSocket-1]<0)
+	printf("accept = %d, failed with error : %d \n",tabSocket[nbSocket-1], errno);
+      else{
+	memset(bufSend,0,BUFLEN);
+	snprintf(bufSend,BUFLEN, "Bonjour,entrez votre nom:\n");
+	send(tabSocket[i],bufSend,BUFLEN,0);
+
+	 int ret=recv(tabSocket[i],&buf,BUFLEN,0);
+	 //nom[tabSocket[i]]=buf;
+	 for(j=0;j<BUFLEN;j++){
+	   nom[tabSocket[i]][j]=buf[j];
+	 }
+	
+	 printf("nom =%s \n", nom[tabSocket[i]]);
+	 
+
+	memset(bufSend,0,BUFLEN);
+	snprintf(bufSend,BUFLEN, "Bienvenue %sL'enchère actuelle est de %d euros.\nEntrez votre enchère:\n",nom[tabSocket[i]], bestEnch);
+	send(tabSocket[i],bufSend,BUFLEN,0);
+	memset(buf,0,BUFLEN);
+	printf("nom =%s \n", nom[tabSocket[i]]);// nom est lié a buf ???
+      }
     }
 
     for(i=0; i<nbSocket; i++){
       if(FD_ISSET(tabSocket[i],&a_surveiller)){
-	  int res=recv(tabSocket[i],&buf,sizeof(int),0);
+	  int res=recv(tabSocket[i],&buf,BUFLEN,0);
+	  printf("nom =%s \n", nom[tabSocket[i]]);
 	  switch(res){
 	  case -1: 
 	    fprintf(stderr,"receive failed");
@@ -96,16 +125,20 @@ int main(int argc, char** argv){
 	    nbSocket--;
 	    break;
 	  default:
-	    if(buf>bestEnch){
-	      bestEnch=buf;
+	    if(atoi(buf)>bestEnch){
+	      bestEnch=atoi(buf);
+	    
 	      client=tabSocket[i];
-	      snprintf(bufSend,BUFLEN, "Nouvelle enchère de %d euros",bestEnch);
+	      printf(" buf = %d, bestEnch = %d, client = %d nom= %s \n",atoi(buf), bestEnch, client, nom[client]);
+	      memset(bufSend,0,BUFLEN);
+	      snprintf(bufSend,BUFLEN, "Nouvelle enchère de %d euros par %s\nEntrez votre enchère:\n",bestEnch, nom[client]);
 	      for(i=0; i<nbSocket;i++){
 		send(tabSocket[i],bufSend, BUFLEN,0);
 	      }
 	    }
 	    else{
-	      snprintf(bufSend,BUFLEN, "Bouffon! %d < %d",buf,bestEnch);
+	      memset(bufSend,0,BUFLEN);
+	      snprintf(bufSend,BUFLEN, "Votre enchère (%d euros) est incorrecte!Enchère actuelle %d euros\nEntrez une nouvelle enchère:\n",atoi(buf),bestEnch);
 	      send(tabSocket[i],bufSend,BUFLEN,0);
 	    }
 	    
