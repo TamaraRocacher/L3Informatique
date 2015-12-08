@@ -1,0 +1,25 @@
+serveur:
+1)initialise et bind la socket "principale",
+ ou il recevra les demande de connections.
+2)créer une socket dediée au client qui se connecte, lors de l'accept()
+3)envoie un message pour demander l'identification du client
+4)recois et stocke l'ID client
+5) lance le jeu (initialise le dico):
+	a)envoie un mot
+	b)recoit et compare une reponse 
+	c) si bonne reponse, incremente le nombre de point du joueur, si "FIN"
+	deconnecte le joueur, sinon continue
+	d) s'arrete si le joueur est deconnecté ou s'il a 5 points
+
+client:
+1)initialise la socket principale et creation d'une socket pour le
+traitement clavier
+2)multiplexage entre les deux sockets pour permettre l'affichage meme pendant
+ la saisie clavier
+3)reception demande didentification
+4)envoie ID
+5)  lancement du jeu:
+	a)recoit le premier mot
+	b)envoie une reponse: si bonne reponse gagne 1 pt et continue,
+	 sinon continu avec un nouveau mot
+	c)taper FIN pour se déconnecter
