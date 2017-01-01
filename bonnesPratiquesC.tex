@@ -1,0 +1,63 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\title{Bonnes Pratiques en C}
+\author{Prérequis: bases en langage C}
+\date{}
+
+\begin{document}
+\maketitle
+\section*{Macros de préprocesseur}
+\begin{itemize}
+\item inclusions
+\item constantes
+\item remplacements de texte (alias)
+\item conditions
+\item macros prédéfinies:
+\end{itemize}
+
+    \begin{lstlisting}[xleftmargin=\parindent]
+    #ifndef MON_FICHIER_H
+    #define ...
+    #endif
+    \end{lstlisting}
+
+\begin{itemize}
+    \item fonctions / avec nobre indéfini de variables
+    \item concaténations
+    \item affichage littéral
+  \end{itemize}
+
+\section*{Les essentiels}
+\begin{itemize}
+  \item \begin{verbatim}
+    #include <stdlib.h>
+  \end{verbatim}
+
+  \item \begin{verbatim}
+    #include <stdio.h>
+  \end{verbatim}
+
+  \item \begin{verbatim}
+    #include <string.h>
+  \end{verbatim}
+
+  \item \begin{verbatim}
+    #include <errno.h>
+  \end{verbatim}
+    => perror("..."); affiche ce qui est passé + un msg detaillé selon ERRNO
+  \end{itemize}
+
+  \section*{Macros}
+  \begin{verbatim}
+  #define PRINTVAR(x) fprintf(stderr, "DEBUG -- %s:%d" #x " =%d\n", _FILE_, _LINE_, x);
+\end{verbatim}
+  \begin{itemize}
+    \item \#x recupère le litteral cad le "nom" de la variable
+    \item affichage de la valeur de la variable pour un fichier et une	ligne donnée (celle de l'appel a PRINTVAR() ).
+  \end{itemize}
+
+\end{document}

@@ -75,18 +75,24 @@ int main(int argc, char** argv){
   dict_t dico;
   anagram_t anagram;
   int nbLignesDico= initialise_dico(&dico,"dictionnaire");
+
   if(nbLignesDico<0){
     fprintf(stderr,"init dico failed\n");
     exit(5);
   }
   int nbSolution, estSolution;
- 
+  int k=0;
   while(tabJoueurs[0][1]<5){
+    k++;
+    printf("%d\n",k);
+    initialise_dico(&dico,"dictionnaire");
     nbSolution=initialise_anagramme(&anagram,&dico);
+    printf("anagramme %d\n",k);
     memset(buf,0,BUFLEN);
     snprintf(buf,BUFLEN," %s",anagram.mot_courant);
     send(sockClient,&buf,BUFLEN,0);
     memset(buf,0,BUFLEN);
+    
     if((rec=recv(sockClient,&buf,BUFLEN,0))<0){
         fprintf(stderr,"receive failed\n");
     }

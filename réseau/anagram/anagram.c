@@ -33,6 +33,7 @@
 int initialise_anagramme (anagram_t * a, dict_t *dico) 
 {
     char *parser;
+    printf("chemin: %s\n",dico->chemin);
     FILE *fichier_dict = fopen(dico->chemin, "r");
     if (!fichier_dict) 
     {
@@ -85,6 +86,7 @@ int initialise_anagramme (anagram_t * a, dict_t *dico)
 
     // Positionne le caractère de fin de chaîne
     a->mot_courant[a->longueur_mot] = '\0';
+    
 
     return a->nombre_mot - 1;
 }
